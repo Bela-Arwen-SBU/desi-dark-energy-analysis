@@ -1,0 +1,64 @@
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Temporary or log files
+*.tmp
+*~
+*.log
+*.out
+
+# Large scientific data files (common formats)
+*.fits
+*.hdf5
+*.h5
+*.dat
+*.npz
+*.pkl
+*.pickle
+
+# CLASS output files
+output/
+*_pk*.dat
+*_cl*.dat
+*_background*.dat
+explanatory*.ini
+
+# CAMB output files
+camb_*
+*_matterpower*.dat
+*_scalCls*.dat
+*_transfer*.dat
+
+# DESI-specific large file patterns
+*_catalog*.fits
+*_spectra*.fits
+*_redshift*.dat
+
+# Generated plots and result directories
+plots/
+figures/
+results/
+*.eps
+*.pdf
+*.png
+
+# Exception: keep final publication plots
+!final_*.eps
+!final_*.pdf
+!final_*.png
+
+# Old file naming conventions (optional cleanup)
+*_old*
+*-old*
+*(old)*
+*\ \(old\)*
+
