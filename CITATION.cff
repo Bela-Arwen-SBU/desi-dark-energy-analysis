@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "desi-dark-energy-analysis"
+authors:
+  - family-names: "Arwen"
+    given-names: "Béla"
+    affiliation: "Stony Brook University"
+date-released: "2025-06-11"
+version: "1.0.0"
+repository-code: "https://github.com/Bela-Arwen-SBU/desi-dark-energy-analysis"
