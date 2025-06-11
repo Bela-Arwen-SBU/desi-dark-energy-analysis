@@ -1,6 +1,6 @@
 # DESI Dark Energy Analysis
 
-A simple Jupyter Notebook for exploring and visualizing three dark energy (DE) models using the CLASS Boltzmann code via Python. This project is designed as a starting point for future, more detailed dark energy analyses and comparisons.
+A simple Jupyter Notebook for exploring and visualizing three dark energy (DE) models from the DESI collaboration's paper "Extended Dark Energy analysis using DESI DR2 BAO measurements" using the CLASS Boltzmann code via Python. This project is designed as a starting point for future, more detailed dark energy analyses and comparisons.
 
 ---
 
