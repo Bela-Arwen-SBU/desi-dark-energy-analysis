@@ -12,7 +12,7 @@ This repository contains a Python Jupyter Notebook that:
 - Provides a foundation for future extensions in dark energy research
 
 ---
-
+<!--
 ## Getting Started
 
 1. **Clone the repository:**
@@ -63,7 +63,7 @@ desi-dark-energy-analysis/
 - Open and execute `DE_models.ipynb` in Jupyter.
 - Edit model parameters in the notebook to explore different scenarios.
 
----
+-->
 
 ## Citation
 
