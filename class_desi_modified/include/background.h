@@ -12,10 +12,7 @@
 
 /** list of possible parametrisations of the DE equation of state */
 
-enum equation_of_state {CLP,EDE};
-
-
-/** list of possible parametrizations of the varying fundamental constants */
+enum equation_of_state {NONE,CLP,EDE,DESI};
 
 enum varconst_dependence {varconst_none,varconst_instant};
 

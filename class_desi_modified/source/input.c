@@ -3278,8 +3278,9 @@ int input_read_parameters_species(struct file_content * pfc,
       }
       else if ((strstr(string1,"EDE") != NULL) || (strstr(string1,"ede") != NULL)) {
         pba->fluid_equation_of_state = EDE;
-      }
-      else {
+      } else if ((strstr(string1,"DESI") != NULL) || (strstr(string1,"desi") != NULL)) {
+          pba->fluid_equation_of_state = DESI;
+      } else {
         class_stop(errmsg,"incomprehensible input '%s' for the field 'fluid_equation_of_state'",string1);
       }
     }
@@ -3298,6 +3299,34 @@ int input_read_parameters_species(struct file_content * pfc,
       class_read_double("Omega_EDE",pba->Omega_EDE);
       class_read_double("cs2_fld",pba->cs2_fld);
     }
+    if (pba->fluid_equation_of_state == DESI) {
+      class_read_double("w0_fld",pba->w0_fld);
+      class_read_double("cs2_fld",pba->cs2_fld);
+
+      // Parse desi_model string
+      class_call(parser_read_string(pfc,"desi_model",&string1,&flag1,errmsg),
+                 errmsg,
+                 errmsg);
+                 if (flag1 == _TRUE_) {
+                  if ((strstr(string1,"thawing") != NULL) || (strstr(string1,"THAWING") != NULL)) {
+                    pba->desi_model = desi_thawing;
+                    }
+                    else if ((strstr(string1,"emergent") != NULL) || (strstr(string1,"EMERGENT") != NULL)) {
+                      pba->desi_model = desi_emergent;
+                      }
+                      else if ((strstr(string1,"mirage") != NULL) || (strstr(string1,"MIRAGE") != NULL)) {
+                        pba->desi_model = desi_mirage;
+                        }
+                        else {
+                          class_stop(errmsg,"Unknown desi_model '%s'. Should be 'thawing', 'emergent', or 'mirage'.",string1);
+                          }
+  }
+
+  // Parse extra DESI parameters
+  class_read_double("thawing_p",pba->thawing_p);
+  class_read_double("emergent_delta",pba->emergent_delta);
+  class_read_double("emergent_zt",pba->emergent_zt);
+  }
   }
 
   /** 8.b) If Omega scalar field (SCF) is different from 0 */
@@ -5903,6 +5932,11 @@ int input_default_params(struct background *pba,
   pba->wa_fld = 0.;
   /** 9.a.2.2) 'EDE' case */
   pba->Omega_EDE = 0.;
+  /** 9.a.2.3) 'DESI' case (models from DESI collaboration paper) */
+  pba->desi_model = desi_none;    /**< DESI dark energy model selector */
+  pba->thawing_p = 1.0;           /**< Power index for thawing model */
+  pba->emergent_delta = 0.0;      /**< Transition steepness for emergent model */
+  pba->emergent_zt = 1.0;         /**< Transition redshift for emergent model */
   /** 9.b) Omega scalar field */
   /** 9.b.1) Potential parameters and initial conditions */
   pba->scf_parameters = NULL;

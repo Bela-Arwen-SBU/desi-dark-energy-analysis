@@ -676,6 +676,9 @@ int background_w_fld(
 
   /** - first, define the function w(a) */
   switch (pba->fluid_equation_of_state) {
+  case NONE:
+    *w_fld = 0.;
+    break;
   case CLP:
     *w_fld = pba->w0_fld + pba->wa_fld * (1. - a);
     break;
@@ -702,26 +705,68 @@ int background_w_fld(
     // w_ede(a) taken from eq. (11) in 1706.00730
     *w_fld = - dOmega_ede_over_da*a/Omega_ede/3./(1.-Omega_ede)+a_eq/3./(a+a_eq);
     break;
+
+    case DESI:
+    printf("DESI model selected: desi_model = %d\n", pba->desi_model);
+    printf("DESI params: thawing_p = %e, emergent_delta = %e, emergent_zt = %e\n", 
+         pba->thawing_p, pba->emergent_delta, pba->emergent_zt);
+    switch (pba->desi_model) {
+      case desi_thawing:
+        *w_fld = -1.0 + (1.0 + pba->w0_fld) * pow(a, pba->thawing_p);
+        break;
+      case desi_emergent:
+        *w_fld = -1.0 + pba->emergent_delta * exp(-pba->emergent_zt / a);
+        break;
+      case desi_mirage:
+        // TODO: Define Mirage model equation
+        *w_fld = -1.0; // Placeholder
+        break;
+      case desi_none:
+      default:
+        *w_fld = pba->w0_fld + pba->wa_fld * (1. - a);
+        break;
+    }
+    break;
   }
 
-
+  /** - now, give the derivative dw/da */
   /** - then, give the corresponding analytic derivative dw/da (used
       by perturbation equations; we could compute it numerically,
       but with a loss of precision; as long as there is a simple
       analytic expression of the derivative of the previous
       function, let's use it! */
+
   switch (pba->fluid_equation_of_state) {
-  case CLP:
-    *dw_over_da_fld = - pba->wa_fld;
-    break;
-  case EDE:
-    d2Omega_ede_over_da2 = 0.;
-    *dw_over_da_fld = - d2Omega_ede_over_da2*a/3./(1.-Omega_ede)/Omega_ede
+    case EDE:
+      *dw_over_da_fld = 
       - dOmega_ede_over_da/3./(1.-Omega_ede)/Omega_ede
       + dOmega_ede_over_da*dOmega_ede_over_da*a/3./(1.-Omega_ede)/(1.-Omega_ede)/Omega_ede
       + a_eq/3./(a+a_eq)/(a+a_eq);
     break;
+
+  case DESI:
+    switch (pba->desi_model) {
+      case desi_thawing:
+        *dw_over_da_fld = (1.0 + pba->w0_fld) * pba->thawing_p * pow(a, pba->thawing_p - 1.0);
+        break;
+      case desi_emergent:
+        *dw_over_da_fld = pba->emergent_delta * (pba->emergent_zt / (a * a)) * exp(-pba->emergent_zt / a);
+        break;
+      case desi_mirage:
+        // TODO: Define derivative of Mirage model
+        *dw_over_da_fld = 0.0; // Placeholder
+        break;
+      case desi_none:
+      default:
+        *dw_over_da_fld = - pba->wa_fld;
+        break;
+    }
+    default:
+    *dw_over_da_fld = 0.0; // Catch-all for unknown fluid types
+    break;
   }
+
+  /** - integral term (set to zero for DESI models unless known analytically) */
 
   /** - finally, give the analytic solution of the following integral:
       \f$ \int_{a}^{a0} da 3(1+w_{fld})/a \f$. This is used in only
@@ -737,8 +782,13 @@ int background_w_fld(
   case CLP:
     *integral_fld = 3.*((1.+pba->w0_fld+pba->wa_fld)*log(1./a) + pba->wa_fld*(a-1.));
     break;
+
   case EDE:
-    class_stop(pba->error_message,"EDE implementation not finished: to finish it, read the comments in background.c just before this line\n");
+    class_stop(pba->error_message,"EDE integral not implemented.");
+    break;
+
+  case DESI:
+    *integral_fld = 0.0; // Can be computed numerically if needed elsewhere
     break;
   }
 
